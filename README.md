@@ -1,6 +1,6 @@
 # tensionLEDMQTT
 
-Push-based replacement for `../tensionLEDHTTP`. The board holds one MQTT
+The board holds one MQTT
 connection open to a broker and gets new patterns pushed to it instead of
 downloading a JSON file from Firebase Storage every 5 seconds.
 
@@ -10,27 +10,6 @@ web app ──publish (wss, 8884)──▶ broker ──push (mqtts, 8883)──
 
 Both ends connect *outbound*, so there's no port forwarding, no dynamic DNS,
 and nothing listening on the home network — and it still works from anywhere.
-
-## What changed from tensionLEDHTTP
-
-| | tensionLEDHTTP | tensionLEDMQTT |
-|---|---|---|
-| Transport | HTTPS GET every 5 s | one MQTT connection, pushed updates |
-| Latency | 0–5 s | ~100 ms |
-| Background traffic | ~2.5 KB every 5 s (~43 MB/month) | a 2-byte ping every 60 s |
-| Payload | `{"0":"magenta",...}` ≈ 2.5 KB | 250 bytes, one char per LED |
-| JSON parsing | ArduinoJson, 4000-byte buffer | none |
-| State on boot | first poll | retained message, arrives on subscribe |
-| `strip.show()` | once per pixel, up to ~1.9 s per update | once per update |
-| Main loop | `delay(5000)`, blocked | non-blocking |
-| Colour logic | read back via `getPixelColor()`, compared against hardcoded packed values that only match at brightness 150 | own `pattern[]` array |
-| Reconnect | none — a wifi blip hangs it | paced retry, reboot after 10 min offline |
-
-Colours themselves are unchanged: the `strip.Color()` arguments in `colorFor()`
-are copied verbatim, so the wall looks the same. (The channel order in those
-arguments looks swapped relative to the colour names — `"green"` is
-`Color(255,0,0)`. It's preserved as-is on purpose; fix it in `colorFor()` if you
-ever rewire.)
 
 ## Setup
 

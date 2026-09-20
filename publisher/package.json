@@ -1,0 +1,15 @@
+{
+  "name": "tension-wall-publisher",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Publishes LED patterns to the tension wall over MQTT",
+  "scripts": {
+    "demo": "node test-publish.js demo",
+    "clear": "node test-publish.js clear",
+    "publish-pattern": "node test-publish.js"
+  },
+  "dependencies": {
+    "mqtt": "^5.7.0"
+  }
+}
